@@ -1,29 +1,109 @@
 package hexlet.code;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.LinkedHashSet;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.LinkedHashMap;
 
 public class Differ {
-    public static String generate(String filepath1, String filepath2) throws Exception {
-        Map config1 = deserializeJsonToJsonNode(fileToString(filepath1));
-        Map config2 = deserializeJsonToJsonNode(fileToString(filepath2));
+    public static String generate(String filepath1, String filepath2, String format) throws Exception {
+        Map config1 = new HashMap<>();
+        Map config2 = new HashMap<>();
+        List<Node> nodesList = new LinkedList<>();
+
+        if (filepath1.endsWith(".json") && filepath2.endsWith((".json"))) {
+            config1 = deserializeJsonToMap(fileToString(filepath1));
+            config2 = deserializeJsonToMap(fileToString(filepath2));
+        } else if (filepath1.endsWith(".yaml") && filepath2.endsWith((".yaml"))) {
+            config1 = deserializeYamlToMap(fileToString(filepath1));
+            config2 = deserializeYamlToMap(fileToString(filepath2));
+        }
 
         Set<String> keys = new LinkedHashSet(config1.keySet());
         keys.addAll(config2.keySet());
         SortedSet<String> sortedKeys = new TreeSet(keys);
 
-        return stylishOutput(sortedKeys, config1, config2);
+        for (String key: sortedKeys) {
+            Object value1 = config1.get(key);
+            Object value2 = config2.get(key);
+
+            if (value1 == null) {
+                value1 = "null";
+            }
+
+            if (value2 == null) {
+                value2 = "null";
+            }
+
+            if (config1.containsKey(key) && config2.containsKey(key)) {
+                if (value1.equals(value2)) {
+                    nodesList.add(new Node(key, config1.get(key), "unchanged"));
+                } else if (!value1.equals(value2)) {
+                    nodesList.add(new Node(key, config2.get(key), "changed", config1.get(key)));
+                }
+            } else if (!config1.containsKey(key) && config2.containsKey(key)) {
+                nodesList.add(new Node(key, config2.get(key), "added"));
+            } else if (config1.containsKey(key) && !config2.containsKey(key)) {
+                nodesList.add(new Node(key, config1.get(key), "deleted"));
+            }
+        }
+
+        return Formatter.format(nodesList, format);
+    }
+
+    public static String generate(String filepath1, String filepath2) throws Exception {
+        Map config1 = new HashMap<>();
+        Map config2 = new HashMap<>();
+        List<Node> nodesList = new LinkedList<>();
+
+        if (filepath1.endsWith(".json") && filepath2.endsWith((".json"))) {
+            config1 = deserializeJsonToMap(fileToString(filepath1));
+            config2 = deserializeJsonToMap(fileToString(filepath2));
+        } else if (filepath1.endsWith(".yaml") && filepath2.endsWith((".yaml"))) {
+            config1 = deserializeYamlToMap(fileToString(filepath1));
+            config2 = deserializeYamlToMap(fileToString(filepath2));
+        }
+
+        Set<String> keys = new LinkedHashSet(config1.keySet());
+        keys.addAll(config2.keySet());
+        SortedSet<String> sortedKeys = new TreeSet(keys);
+
+        for (String key: sortedKeys) {
+            Object value1 = config1.get(key);
+            Object value2 = config2.get(key);
+
+            if (value1 == null) {
+                value1 = "null";
+            }
+            if (value2 == null) {
+                value2 = "null";
+            }
+
+            if (config1.containsKey(key) && config2.containsKey(key)) {
+                if (value1.equals(value2)) {
+                    nodesList.add(new Node(key, config1.get(key), "unchanged"));
+                } else if (!value1.equals(value2)) {
+                    nodesList.add(new Node(key, config2.get(key), "changed", config1.get(key)));
+                }
+            } else if (!config1.containsKey(key) && config2.containsKey(key)) {
+                nodesList.add(new Node(key, config2.get(key), "added"));
+            } else if (config1.containsKey(key) && !config2.containsKey(key)) {
+                nodesList.add(new Node(key, config1.get(key), "deleted"));
+            }
+        }
+
+        return Formatter.format(nodesList, "stylish");
     }
 
     public static String fileToString(String filepath) throws Exception {
@@ -36,58 +116,13 @@ public class Differ {
         return Files.readString(path);
     }
 
-    public static Map deserializeJsonToJsonNode(String json) throws JsonProcessingException {
+    public static Map deserializeJsonToMap(String json) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(json, Map.class);
     }
 
-    public static String stylishOutput(Set<String> keys, Map configMap1, Map configMap2) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        StringBuilder stringBuilder = new StringBuilder();
-        Map<String, String> res = new LinkedHashMap();
-
-        for (String key: keys) {
-            JsonNode jsonNode1 = objectMapper.valueToTree(configMap1.get(key));
-            JsonNode jsonNode2 = objectMapper.valueToTree(configMap2.get(key));
-
-            if (configMap1.containsKey(key) && configMap2.containsKey(key)) {
-                if (configMap1.get(key).equals(configMap2.get(key))) {
-                    res.put("  " + key, checkDataType(jsonNode1));
-                } else if (!configMap1.get(key).equals(configMap2.get(key))) {
-                    res.put("- " + key, checkDataType(jsonNode1));
-                    res.put("+ " + key, checkDataType(jsonNode2));
-                }
-            } else if (!configMap1.containsKey(key) && configMap2.containsKey(key)) {
-                res.put("+ " + key, checkDataType(jsonNode2));
-            } else if (configMap1.containsKey(key) && !configMap2.containsKey(key)) {
-                res.put("- " + key, checkDataType(jsonNode1));
-            }
-
-        }
-
-        stringBuilder.append("{\n");
-
-        for (Map.Entry<String, String> field: res.entrySet()) {
-            stringBuilder.append("  ")
-                    .append(field.getKey())
-                    .append(": ")
-                    .append(field.getValue())
-                    .append("\n");
-        }
-
-        stringBuilder.append("}");
-
-        return stringBuilder.toString().replace("\"", "");
-
-    }
-
-    public static String checkDataType(JsonNode node) {
-        if (node.isObject()) {
-            return node.toString();
-        } else if (node.isArray()) {
-            return node.toString();
-        } else {
-            return node.toString();
-        }
+    public static Map deserializeYamlToMap(String yaml) throws JsonProcessingException {
+        YAMLMapper yamlMapper = new YAMLMapper();
+        return yamlMapper.readValue(yaml, Map.class);
     }
 }

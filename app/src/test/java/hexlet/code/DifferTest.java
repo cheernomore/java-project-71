@@ -17,4 +17,34 @@ public class DifferTest {
 
         assertEquals(example, Differ.generate("src/test/resources/file1.json", "src/test/resources/file2.json"));
     }
+
+    @Test
+    public void compareFlatYaml() throws Exception {
+        Path path = Paths.get("src/test/resources/exampleJson.txt");
+        String example = Files.readString(path);
+
+        assertEquals(example, Differ.generate("src/test/resources/yaml1.yaml", "src/test/resources/yaml2.yaml"));
+    }
+
+    @Test
+    public void compareNestedJson() throws Exception {
+        Path path = Paths.get("src/test/resources/nestedJsonExample.txt");
+        String example = Files.readString(path);
+
+        assertEquals(example, Differ.generate(
+                "src/test/resources/nestedJson1.json",
+                "src/test/resources/nestedJson2.json"));
+    }
+
+    @Test
+    public void compareNestedJsonToPlain() throws Exception {
+        Path path = Paths.get("src/test/resources/examplePlain.txt");
+        String example = Files.readString(path);
+
+        assertEquals(example, Differ.generate(
+                "src/test/resources/nestedJson1.json",
+                "src/test/resources/nestedJson2.json",
+                "plain"
+                ));
+    }
 }
