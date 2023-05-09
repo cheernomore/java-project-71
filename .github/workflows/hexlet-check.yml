@@ -18,6 +18,18 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Lint Action
+        uses: wearerequired/lint-action@v2.3.0
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v1.4.4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build
+        run: cd app && make build
+
       - name: Hexlet project check
         uses: hexlet/project-action@release
         with:
