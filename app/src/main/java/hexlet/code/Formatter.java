@@ -9,9 +9,11 @@ public class Formatter {
     public static String format(List<Node> nodesList, String format) {
         switch (format) {
             case "plain":
-                return Plain.output(nodesList);
+                return Plain.convert(nodesList);
+            case "stylish":
+                return Stylish.convert(nodesList);
             default:
-                return Stylish.output(nodesList);
+                throw new RuntimeException("Not supported format");
         }
     }
 }

@@ -1,13 +1,11 @@
 package formatters;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.Node;
 import java.util.List;
+import java.util.Map;
 
 public class Plain {
-
-    public static String output(List<Node> nodeList) {
+    public static String convert(List<Node> nodeList) {
         StringBuilder stringBuilder = new StringBuilder();
 
 
@@ -16,13 +14,12 @@ public class Plain {
             Object value = node.getValue();
             String state = node.getState();
 
-            JsonNode jsonNodeValue = toJsonNode(value);
-            String preparedValue = checkDataType(jsonNodeValue, "plain");
+            String preparedValue = stringify(value);
 
             switch (state) {
                 case "changed":
-                    JsonNode jsonNodeOldValue = toJsonNode(node.getOldValue());
-                    String preparedOldValue = checkDataType(jsonNodeOldValue, "plain");
+                    String preparedOldValue = stringify(node.getOldValue());
+
                     stringBuilder
                             .append("Property '" + key + "' was updated. ")
                             .append("From " + preparedOldValue + " to " + preparedValue + "\n");
@@ -43,46 +40,19 @@ public class Plain {
         return stringBuilder.toString();
     }
 
-    public static String checkDataType(JsonNode node, String format) {
-
-        if (format.equals("plain")) {
-            if (node.isObject() || node.isArray()) {
-                return "[complex value]";
-            } else if (node.isNull() || node.isInt() || node.isBoolean()) {
-                return node.toString();
-            } else {
-                return "'" + clearString(node.toString()) + "'";
-            }
+    private static String stringify(Object value) {
+        if (value == null) {
+            return "null";
         }
 
-        if (node.isObject()) {
-            return clearString(node.toString());
-        } else if (node.isArray()) {
-            return clearString(node.toString());
-        } else {
-            return node.toString();
+        if (value instanceof String) {
+            return "'" + value + "'";
         }
-    }
 
-    public static String checkDataType(JsonNode node) {
-        if (node.isObject()) {
-            return clearString(node.toString());
-        } else if (node.isArray()) {
-            return clearString(node.toString());
-        } else {
-            return node.toString();
+        if (value instanceof Map || value instanceof List) {
+            return "[complex value]";
         }
-    }
 
-    public static String clearString(String value) {
-        return value
-                .replace("\"", "")
-                .replace(",", ", ")
-                .replace(":", "=");
-    }
-
-    public static JsonNode toJsonNode(Object value) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.valueToTree(value);
+        return value.toString();
     }
 }
