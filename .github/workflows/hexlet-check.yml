@@ -30,8 +30,11 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
-      - name: Build
-        run: cd app && make build
+      - name: Execute Gradle test
+        run: ./gradlew test
+
+      - name: Execute Gradle build
+        run: ./gradlew build
 
       - name: Hexlet project check
         uses: hexlet/project-action@release
