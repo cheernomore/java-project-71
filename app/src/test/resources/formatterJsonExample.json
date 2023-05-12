@@ -1,0 +1,16 @@
+{
+  "changed": {
+    "chars1": ["a", "b", "c"],
+    "chars2": false,
+    "obj1": {
+      "nestedKey": "value",
+      "isNested": false
+    }
+  },
+  "added": {
+    "key1": 10
+  },
+  "deleted": {
+    "deleted": "deleted"
+  }
+}

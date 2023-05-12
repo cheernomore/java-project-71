@@ -1,6 +1,7 @@
 package hexlet.code;
 
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,5 +47,17 @@ public class DifferTest {
                 "src/test/resources/nestedJson2.json",
                 "plain"
                 ));
+    }
+
+    @Test
+    public void compareFormattedJson() throws Exception {
+        Path path = Paths.get("src/test/resources/formatterJsonExample.json");
+        String example = Files.readString(path);
+
+        JSONAssert.assertEquals(example, Differ.generate(
+                "src/test/resources/formatterJson1.json",
+                "src/test/resources/formatterJson2.json",
+                "json"
+        ), true);
     }
 }
