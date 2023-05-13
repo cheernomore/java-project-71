@@ -15,7 +15,7 @@ class App implements Callable<Integer> {
     @Parameters(index = "1", paramLabel = "filepath2", description = "Path to second file")
     String filepath2;
     @Option(names = {"-f", "--format"}, paramLabel = "format", description = "Choose format to compare",
-    defaultValue = "stylish")
+        defaultValue = "stylish")
     String option;
 
     @Override
