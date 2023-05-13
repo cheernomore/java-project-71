@@ -21,7 +21,7 @@ public class Json {
 
             switch (state) {
                 case "changed":
-                    if(!mapJson.containsKey("changed")) {
+                    if (!mapJson.containsKey("changed")) {
                         mapJson.put("changed", new HashMap<>());
                     }
                     mapJson.get("changed").put(key, value);
