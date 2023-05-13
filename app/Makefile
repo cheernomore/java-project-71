@@ -7,8 +7,8 @@ test:
 
 .PHONY: build
 build: checkstyle
-	./gradlew test
 	./gradlew build
+	./gradlew test
 
 test-installDist:
 	./gradlew installDist

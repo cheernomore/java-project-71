@@ -28,7 +28,7 @@ jobs:
           java-version: '17'
 
       - name: Gradle build
-        run: cd app && make test && cd ..
+        run: cd app && make build && cd ..
 
       - name: Hexlet project check
         uses: hexlet/project-action@release
