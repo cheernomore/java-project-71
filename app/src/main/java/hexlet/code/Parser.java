@@ -16,7 +16,7 @@ public class Parser {
 
         if (filepath.endsWith(".json")) {
             return deserializeJsonToMap(file);
-        } else if (filepath.endsWith(".yaml")) {
+        } else if (filepath.endsWith(".yaml") || filepath.endsWith(".yml")) {
             return deserializeYamlToMap(file);
         } else {
             throw new RuntimeException("Impossible parse specified file extension" + filepath);
