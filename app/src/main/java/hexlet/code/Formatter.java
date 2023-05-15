@@ -25,6 +25,6 @@ public class Formatter {
     }
 
     public static void showOutput(String formattedDiffer) {
-        System.out.println(formattedDiffer);
+        System.out.print(formattedDiffer);
     }
 }
