@@ -21,7 +21,7 @@ public class DifferTest {
 
     @Test
     public void compareFlatYaml() throws Exception {
-        Path path = Paths.get("src/test/resources/exampleJson.txt");
+        Path path = Paths.get("src/test/resources/exampleYaml.txt");
         String example = Files.readString(path);
 
         assertEquals(example, Differ.generate("src/test/resources/yaml1.yaml", "src/test/resources/yaml2.yaml"));
