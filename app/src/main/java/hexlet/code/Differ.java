@@ -9,7 +9,7 @@ public class Differ {
         Map<String, Object> config2 = Parser.parseFile(filepath2);
         List<Node> nodesList = MapDiffer.getDiff(config1, config2);
 
-        return Formatter.format(nodesList, format);
+        return Formatter.format(nodesList, format).trim();
     }
 
     public static String generate(String filepath1, String filepath2) throws Exception {
@@ -17,6 +17,6 @@ public class Differ {
         Map<String, Object> config2 = Parser.parseFile(filepath2);
         List<Node> nodesList = MapDiffer.getDiff(config1, config2);
 
-        return Formatter.format(nodesList, "stylish");
+        return Formatter.format(nodesList, "stylish").trim();
     }
 }
