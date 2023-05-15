@@ -20,7 +20,8 @@ class App implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        Differ.generate(filepath1, filepath2, option);
+        String output = Differ.generate(filepath1, filepath2, option);
+        System.out.println(output);
         return 0;
     }
 
