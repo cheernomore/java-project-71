@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class Parser {
 
-    public static Map<String, Object> parseFile(String filepath) throws Exception {
+    public static Map parseFile(String filepath) throws Exception {
         String file = fileToString(filepath);
 
         if (filepath.endsWith(".json")) {
@@ -33,12 +33,12 @@ public class Parser {
         return Files.readString(path);
     }
 
-    public static Map<String, Object> deserializeJsonToMap(String json) throws JsonProcessingException {
+    public static Map deserializeJsonToMap(String json) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(json, Map.class);
     }
 
-    public static Map<String, Object> deserializeYamlToMap(String yaml) throws JsonProcessingException {
+    public static Map deserializeYamlToMap(String yaml) throws JsonProcessingException {
         YAMLMapper yamlMapper = new YAMLMapper();
         return yamlMapper.readValue(yaml, Map.class);
     }

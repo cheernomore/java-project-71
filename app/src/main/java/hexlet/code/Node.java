@@ -1,19 +1,19 @@
 package hexlet.code;
 
-public class Node {
-    String key;
-    Object value;
-    String state;
-    Object oldValue;
+public final class Node {
+    private String key;
+    private Object value;
+    private String state;
+    private Object oldValue;
 
-    public Node(String key, Object value, String state, Object oldValue) {
+    Node(String key, Object value, String state, Object oldValue) {
         this.key = key;
         this.value = value;
         this.state = state;
         this.oldValue = oldValue;
     }
 
-    public Node(String key, Object value, String state) {
+    Node(String key, Object value, String state) {
         this.key = key;
         this.value = value;
         this.state = state;
