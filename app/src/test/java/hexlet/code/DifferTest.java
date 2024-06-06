@@ -11,53 +11,47 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DifferTest {
 
+    private Path getFixturePath(String filename) {
+        return Paths.get("src/test/resources/fixtures", filename).toAbsolutePath().normalize();
+    }
+
+    private String readFixture(String filename) throws Exception {
+        Path path = getFixturePath(filename);
+        return Files.readString(path);
+    }
+
     @Test
     public void compareFlatJson() throws Exception {
-        Path path = Paths.get("src/test/resources/exampleJson.txt");
-        String example = Files.readString(path);
-
-        assertEquals(example, Differ.generate("src/test/resources/file1.json", "src/test/resources/file2.json"));
+        String example = readFixture("exampleJson.txt");
+        assertEquals(example, Differ.generate(getFixturePath("file1.json").toString(),
+                getFixturePath("file2.json").toString()));
     }
 
     @Test
     public void compareFlatYaml() throws Exception {
-        Path path = Paths.get("src/test/resources/exampleYaml.txt");
-        String example = Files.readString(path);
-
-        assertEquals(example, Differ.generate("src/test/resources/yaml1.yaml", "src/test/resources/yaml2.yaml"));
+        String example = readFixture("exampleYaml.txt");
+        assertEquals(example, Differ.generate(getFixturePath("yaml1.yaml").toString(),
+                getFixturePath("yaml2.yaml").toString()));
     }
 
     @Test
     public void compareNestedJson() throws Exception {
-        Path path = Paths.get("src/test/resources/nestedJsonExample.txt");
-        String example = Files.readString(path);
-
-        assertEquals(example, Differ.generate(
-                "src/test/resources/nestedJson1.json",
-                "src/test/resources/nestedJson2.json"));
+        String example = readFixture("nestedJsonExample.txt");
+        assertEquals(example, Differ.generate(getFixturePath("nestedJson1.json").toString(),
+                getFixturePath("nestedJson2.json").toString()));
     }
 
     @Test
     public void compareNestedJsonToPlain() throws Exception {
-        Path path = Paths.get("src/test/resources/examplePlain.txt");
-        String example = Files.readString(path);
-
-        assertEquals(example, Differ.generate(
-                "src/test/resources/nestedJson1.json",
-                "src/test/resources/nestedJson2.json",
-                "plain"
-                ));
+        String example = readFixture("examplePlain.txt");
+        assertEquals(example, Differ.generate(getFixturePath("nestedJson1.json").toString(),
+                getFixturePath("nestedJson2.json").toString(), "plain"));
     }
 
     @Test
     public void compareFormattedJson() throws Exception {
-        Path path = Paths.get("src/test/resources/formatterJsonExample.json");
-        String example = Files.readString(path);
-
-        JSONAssert.assertEquals(example, Differ.generate(
-                "src/test/resources/formatterJson1.json",
-                "src/test/resources/formatterJson2.json",
-                "json"
-        ), true);
+        String example = readFixture("formatterJsonExample.json");
+        JSONAssert.assertEquals(example, Differ.generate(getFixturePath("formatterJson1.json").toString(),
+                getFixturePath("formatterJson2.json").toString(), "json"), true);
     }
 }
